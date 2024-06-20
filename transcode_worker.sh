@@ -38,8 +38,8 @@ transcode_video() {
     dash_playlists=""
 
     # Resolusi dan bandwidth yang digunakan
-    resolutions=("1280x720" "640x360")
-    bandwidths=("3000k" "1000k")
+    resolutions=("1920x1080" "1280x720" "854x480" "640x360" "426x240")
+    bandwidths=("5000k" "3000k" "1500k" "1000k" "500k")
 
     for i in "${!resolutions[@]}"; do
         resolution="${resolutions[$i]}"
