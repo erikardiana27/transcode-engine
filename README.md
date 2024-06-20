@@ -17,3 +17,4 @@ Directory Structure
 Log Files
 
 /app/log-file/watcher and transcode.log: Log file for monitoring script actions.
+
