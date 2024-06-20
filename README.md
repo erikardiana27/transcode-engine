@@ -1,0 +1,1 @@
+This project is designed to create a Docker container using the latest Ubuntu image as the base. The container is set up with several tools including ffmpeg, inotify-tools, taskset, task-spooler, jq, and redis-tools. Additionally, it includes a script for monitoring a directory and processing video files with a watermark.
