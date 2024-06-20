@@ -1,0 +1,31 @@
+# Gunakan image Ubuntu terbaru sebagai basis
+FROM ubuntu:latest
+
+# Instal ffmpeg, inotify-tools, taskset, task-spooler, jq, dan redis-tools
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ffmpeg inotify-tools util-linux task-spooler redis-tools jq && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Buat direktori untuk script dan file watermark
+RUN mkdir -p /app/input /app/output /app/raw-vids /app/watermark /app/queue /app/log-file && \
+    chmod 755 /app /app/input /app/output /app/raw-vids /app/watermark /app/queue /app/log-file
+#   chown root:root /app /app/input /app/output /app/raw-vids /app/watermark /app/queue /app/log-file
+# Membuat file log dan mengatur izin
+RUN touch /app/log-file/transcode.log \
+    && chmod 755 /app/log-file/transcode.log
+# Salin script dan watermark ke direktori /app
+COPY transcode_worker.sh /app/
+COPY watermark.png rctiplus-grey.png /app/watermark/
+
+# Beri izin eksekusi pada script
+RUN chmod +x /app/transcode_worker.sh
+
+# Set direktori kerja
+WORKDIR /app
+
+# Set up tsp
+RUN ln -s /usr/bin/tsp /usr/local/bin/tsp && tsp -S 1
+
+# Perintah untuk menjalankan script monitor_input.sh di container loudlaugher
+CMD ["sh", "-c", "./monitor_input.sh && tail -f /dev/null"]
+

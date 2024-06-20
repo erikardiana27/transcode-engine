@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  watcher:
+    build:
+      context: .
+      dockerfile: Dockerfile-monitor-input
+    container_name: iseeyou
+    volumes:
+      - /home/nughard/rplus/transcode-v2/raw-vids:/app/raw-vids
+      - /home/nughard/rplus/transcode-v2/input:/app/input
+      - /home/nughard/rplus/transcode-v2/output:/app/output
+      - /home/nughard/rplus/transcode-v2/watermark:/app/watermark
+      - /home/nughard/rplus/transcode-v2/log-file:/app/log-file
+    networks:
+      - transcode_network
+    command: sh -c "./monitor_input.sh && ls -l /app/log-file && tail -f /app/log-file/watcher.log"
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile-worker
+    container_name: iwork4you
+    volumes:
+      - /home/nughard/rplus/transcode-v2/raw-vids:/app/raw-vids
+      - /home/nughard/rplus/transcode-v2/input:/app/input
+      - /home/nughard/rplus/transcode-v2/output:/app/output
+      - /home/nughard/rplus/transcode-v2/watermark:/app/watermark
+      - /home/nughard/rplus/transcode-v2/log-file:/app/log-file
+    networks:
+      - transcode_network
+    command: sh -c "./transcode_worker.sh && ls -l /app/log-file && tail -f /app/log-file/transcode.log"
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - transcode_network
+
+networks:
+  transcode_network:
+    driver: bridge
